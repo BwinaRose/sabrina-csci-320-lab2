@@ -21,6 +21,31 @@ int** read_board_from_file(char* filename){
 }
 
 
+void * validate_row(void* params)
+{
+    param_struct *p = (param_struct*) params;
+    int validation_array[9] = {0};
+    int row = p -> starting_row;
+    int col = p -> starting_col;
+
+    for(int i = 0; i< 9; i++)
+    {   
+        int target = sudoku_board[row][i];
+        if (validation_array[target - 1]==1)
+        {
+            pthread_exit(NULL);
+        }
+        else{
+            validation_array[target - 1] = 1;
+        }
+    } 
+
+    worker_validation[9 + row] = 1;
+    pthread_exit(NULL);
+
+}
+
+
 void * validate_col(void* params)
 {
     param_struct *p = (param_struct*) params;
@@ -40,7 +65,7 @@ void * validate_col(void* params)
         }
     } 
 
-    worker_validation[18+col] = 1;
+    worker_validation[18 + col] = 1;
     pthread_exit(NULL);
 }
 
@@ -60,11 +85,11 @@ void * validate_subarray(void* params)
                 pthread_exit(NULL);
             }
             else{
-                validation_array[target-1] = 1;
+                validation_array[target - 1] = 1;
             }
         }
     }
-    worker_validation[row+col/3]=1;
+    worker_validation[row + col / 3] = 1;
     pthread_exit(NULL);
 
 }
